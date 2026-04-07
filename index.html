@@ -1,331 +1,376 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>给十年后的你</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* 樱花飘落特效 */
+      .cherry-blossom-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      .cherry-blossom {
+        position: absolute;
+        top: -10%;
+        width: 10px;
+        height: 10px;
+        background-color: #ffb7c5;
+        border-radius: 150% 0 150% 0;
+        opacity: 0.7;
+        animation: fall linear infinite;
+      }
+
+      @keyframes fall {
+        0% {
+          transform: translateY(-10vh) rotate(0deg);
+          opacity: 0.7;
         }
-        
-        /* 樱花飘落特效 */
-        .cherry-blossom-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            overflow: hidden;
+        80% {
+          transform: translateY(90vh) rotate(540deg);
+          opacity: 0.7;
         }
-        
-        .cherry-blossom {
-            position: absolute;
-            top: -10%;
-            width: 10px;
-            height: 10px;
-            background-color: #ffb7c5;
-            border-radius: 150% 0 150% 0;
-            opacity: 0.7;
-            animation: fall linear infinite;
+        90% {
+          transform: translateY(95vh) rotate(630deg);
+          opacity: 0.7;
         }
-        
-        @keyframes fall {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-                opacity: 0.7;
-            }
-            80% {
-                transform: translateY(90vh) rotate(540deg);
-                opacity: 0.7;
-            }
-            90% {
-                transform: translateY(95vh) rotate(630deg);
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(95vh) rotate(720deg);
-                opacity: 0;
-            }
+        100% {
+          transform: translateY(95vh) rotate(720deg);
+          opacity: 0;
         }
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #fff9e6;
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+      }
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #fff9e6;
+        color: #333;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+        width: 100%;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+        padding: 40px;
+        text-align: center;
+      }
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #ffcc00;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      p {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .countdown {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin: 30px 0;
+        overflow-x: auto;
+        padding: 8px 0;
+      }
+      .countdown::-webkit-scrollbar {
+        display: none;
+      }
+      .countdown-item {
+        background: #fff3cd;
+        padding: 12px 6px;
+        border-radius: 8px;
+        min-width: 55px;
+        flex: 0 0 auto;
+        text-align: center;
+        border: 2px solid #ffcc00;
+      }
+      .countdown-number {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #333;
+      }
+      .countdown-label {
+        font-size: 0.7rem;
+        color: #666;
+        margin-top: 3px;
+      }
+
+      /* 媒体查询：适配移动设备 */
+      @media (max-width: 768px) {
         .container {
-            max-width: 800px;
-            width: 100%;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
-            padding: 40px;
-            text-align: center;
+          padding: 15px;
+          border-radius: 10px;
         }
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #ffcc00;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+          font-size: 1.8rem;
         }
         p {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
+          font-size: 0.9rem;
         }
         .countdown {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 30px 0;
-            overflow-x: auto;
-            padding: 8px 0;
-        }
-        .countdown::-webkit-scrollbar {
-            display: none;
+          gap: 6px;
+          margin: 25px 0;
         }
         .countdown-item {
-            background: #fff3cd;
-            padding: 12px 6px;
-            border-radius: 8px;
-            min-width: 55px;
-            flex: 0 0 auto;
-            text-align: center;
-            border: 2px solid #ffcc00;
+          padding: 8px 4px;
+          min-width: 45px;
+          border-width: 1px;
         }
         .countdown-number {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #333;
+          font-size: 1rem;
         }
         .countdown-label {
-            font-size: 0.7rem;
-            color: #666;
-            margin-top: 3px;
+          font-size: 0.6rem;
         }
-        
-        /* 媒体查询：适配移动设备 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-                border-radius: 10px;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
-            p {
-                font-size: 0.9rem;
-            }
-            .countdown {
-                gap: 6px;
-                margin: 25px 0;
-            }
-            .countdown-item {
-                padding: 8px 4px;
-                min-width: 45px;
-                border-width: 1px;
-            }
-            .countdown-number {
-                font-size: 1rem;
-            }
-            .countdown-label {
-                font-size: 0.6rem;
-            }
-        }
-        .letter {
-            text-align: left;
-            margin-top: 40px;
-            padding: 25px;
-            background: #fff9e6;
-            border-radius: 12px;
-            border: 2px solid #ffcc00;
-        }
-        .letter h2 {
-            margin-bottom: 20px;
-            color: #ffcc00;
-        }
-        .letter p {
-            margin-bottom: 15px;
-            line-height: 1.8;
-        }
-        .footer {
-            margin-top: 40px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .test-button {
-            background-color: #ffcc00;
-            color: #333;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .test-button:hover {
-            background-color: #ffd700;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
+      }
+      .letter {
+        text-align: left;
+        margin-top: 40px;
+        padding: 25px;
+        background: #fff9e6;
+        border-radius: 12px;
+        border: 2px solid #ffcc00;
+      }
+      .letter h2 {
+        margin-bottom: 20px;
+        color: #ffcc00;
+      }
+      .letter p {
+        margin-bottom: 15px;
+        line-height: 1.8;
+      }
+      .footer {
+        margin-top: 40px;
+        color: #666;
+        font-size: 0.9rem;
+      }
+      .test-button {
+        background-color: #ffcc00;
+        color: #333;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .test-button:hover {
+        background-color: #ffd700;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="cherry-blossom-container" id="cherry-blossom-container"></div>
+    <!-- 背景音乐 -->
+    <audio id="background-music" loop>
+      <source
+        src="https://diskmirror.lingyuzhao.top/1107/Binary/M8000011yLdT1hTbnp.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
     <div class="container">
-        <div id="countdown-section">
-            <h1>致十年后的你</h1>
-            <p>这是一封需要十年时间才能送达的信</p>
-            <p>只有在2034年2月2日之后，你才能看到我想对你说的话</p>
-            <div class="countdown">
-                <div class="countdown-item">
-                    <div class="countdown-number" id="years">0</div>
-                    <div class="countdown-label">年</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="months">0</div>
-                    <div class="countdown-label">月</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="days">0</div>
-                    <div class="countdown-label">日</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="hours">0</div>
-                    <div class="countdown-label">时</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="minutes">0</div>
-                    <div class="countdown-label">分</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="seconds">0</div>
-                    <div class="countdown-label">秒</div>
-                </div>
-            </div>
-            <p>时间会慢慢沉淀，有些东西会在你心底慢慢模糊</p>
-            <p>十年后，当你看到这封信时，希望你已经找到了属于自己的幸福</p>
-            <button class="test-button" onclick="testFutureDate()">测试未来日期显示</button>
+      <div id="countdown-section">
+        <h1>致十年后的你</h1>
+        <p>这是一封需要十年时间才能打开的信</p>
+        <p>只有在2034年2月2日之后，你才能看到我想对你说的话</p>
+        <div class="countdown">
+          <div class="countdown-item">
+            <div class="countdown-number" id="years">0</div>
+            <div class="countdown-label">年</div>
+          </div>
+          <div class="countdown-item">
+            <div class="countdown-number" id="months">0</div>
+            <div class="countdown-label">月</div>
+          </div>
+          <div class="countdown-item">
+            <div class="countdown-number" id="days">0</div>
+            <div class="countdown-label">日</div>
+          </div>
+          <div class="countdown-item">
+            <div class="countdown-number" id="hours">0</div>
+            <div class="countdown-label">时</div>
+          </div>
+          <div class="countdown-item">
+            <div class="countdown-number" id="minutes">0</div>
+            <div class="countdown-label">分</div>
+          </div>
+          <div class="countdown-item">
+            <div class="countdown-number" id="seconds">0</div>
+            <div class="countdown-label">秒</div>
+          </div>
         </div>
-        <div id="letter-section" style="display: none;">
-            <h1>给前任的信</h1>
-            <div class="letter">
-                <h2>亲爱的，</h2>
-                <p>当你看到这封信时，已经过去了整整十年。不知道你现在过得怎么样，是否已经找到了那个能陪你走完一生的人。</p>
-                <p>十年前，我们分开了。现在回想起来，那些曾经的争吵和矛盾都已经变得模糊，留在记忆里的只有那些美好的时光。</p>
-                <p>我想告诉你，我不后悔曾经和你在一起的日子。那些共同度过的时光，那些一起经历的事情，都成为了我生命中宝贵的财富。</p>
-                <p>我希望你现在过得幸福，希望你找到了真正属于你的那个人。无论如何，我都会在心里为你祝福。</p>
-                <p>谢谢你曾经出现在我的生命里，谢谢你陪我走过那段青春岁月。</p>
-                <p>祝你一切安好。</p>
-                <p>曾经的我</p>
-                <p>2034年2月2日</p>
-            </div>
+        <p>时间会慢慢沉淀，有些东西会在你心底慢慢模糊</p>
+        <p>十年后，当你看到这封信时，希望你已经找到了属于自己的幸福</p>
+        <button class="test-button" onclick="testFutureDate()">
+          测试未来日期显示
+        </button>
+        <div class="music-controls">
+          <button class="test-button" onclick="toggleMusic()" id="music-button">
+            播放音乐
+          </button>
         </div>
-        <div class="footer">
-            <p>© 2024 时间胶囊</p>
+      </div>
+      <div id="letter-section" style="display: none">
+        <h1>给前任的信</h1>
+        <div class="letter">
+          <h2>亲爱的，</h2>
+          <p>
+            当你看到这封信时，已经过去了整整十年。不知道你现在过得怎么样，是否已经找到了那个能陪你走完一生的人。
+          </p>
+          <p>
+            十年前，我们分开了。现在回想起来，那些曾经的争吵和矛盾都已经变得模糊，留在记忆里的只有那些美好的时光。
+          </p>
+          <p>
+            我想告诉你，我不后悔曾经和你在一起的日子。那些共同度过的时光，那些一起经历的事情，都成为了我生命中宝贵的财富。
+          </p>
+          <p>
+            我希望你现在过得幸福，希望你找到了真正属于你的那个人。无论如何，我都会在心里为你祝福。
+          </p>
+          <p>谢谢你曾经出现在我的生命里，谢谢你陪我走过那段青春岁月。</p>
+          <p>祝你一切安好。</p>
+          <p>曾经的我</p>
+          <p>2034年2月2日</p>
         </div>
+      </div>
+      <div class="footer">
+        <p>© 2024 时间胶囊</p>
+      </div>
     </div>
     <script>
-        // 设置目标日期：2034年2月2日
-        const targetDate = new Date('2034-02-02T00:00:00');
-        
-        // 检查当前时间是否已经超过目标日期
-        function checkDate() {
-            const now = new Date();
-            if (now >= targetDate) {
-                // 显示信件内容
-                document.getElementById('countdown-section').style.display = 'none';
-                document.getElementById('letter-section').style.display = 'block';
-            } else {
-                // 继续显示倒计时
-                updateCountdown();
-            }
+      // 设置目标日期：2034年2月2日
+      const targetDate = new Date("2034-02-02T00:00:00");
+
+      // 检查当前时间是否已经超过目标日期
+      function checkDate() {
+        const now = new Date();
+        if (now >= targetDate) {
+          // 显示信件内容
+          document.getElementById("countdown-section").style.display = "none";
+          document.getElementById("letter-section").style.display = "block";
+        } else {
+          // 继续显示倒计时
+          updateCountdown();
         }
-        
-        // 更新倒计时
-        function updateCountdown() {
-            const now = new Date();
-            const timeLeft = targetDate - now;
-            
-            // 计算时间差
-            const years = Math.floor(timeLeft / (1000 * 60 * 60 * 24 * 365));
-            const months = Math.floor((timeLeft % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
-            const days = Math.floor((timeLeft % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            
-            // 更新DOM
-            document.getElementById('years').textContent = years;
-            document.getElementById('months').textContent = months;
-            document.getElementById('days').textContent = days;
-            document.getElementById('hours').textContent = hours;
-            document.getElementById('minutes').textContent = minutes;
-            document.getElementById('seconds').textContent = seconds;
+      }
+
+      // 更新倒计时
+      function updateCountdown() {
+        const now = new Date();
+        const timeLeft = targetDate - now;
+
+        // 计算时间差
+        const years = Math.floor(timeLeft / (1000 * 60 * 60 * 24 * 365));
+        const months = Math.floor(
+          (timeLeft % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30),
+        );
+        const days = Math.floor(
+          (timeLeft % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
+        );
+        const hours = Math.floor(
+          (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+        );
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        // 更新DOM
+        document.getElementById("years").textContent = years;
+        document.getElementById("months").textContent = months;
+        document.getElementById("days").textContent = days;
+        document.getElementById("hours").textContent = hours;
+        document.getElementById("minutes").textContent = minutes;
+        document.getElementById("seconds").textContent = seconds;
+      }
+
+      // 初始检查
+      checkDate();
+
+      // 每秒更新一次倒计时
+      setInterval(checkDate, 1000);
+
+      // 测试未来日期显示
+      function testFutureDate() {
+        document.getElementById("countdown-section").style.display = "none";
+        document.getElementById("letter-section").style.display = "block";
+      }
+
+      // 樱花飘落特效
+      function createCherryBlossoms() {
+        const container = document.getElementById("cherry-blossom-container");
+        const blossomCount = 30; // 增加樱花数量
+
+        for (let i = 0; i < blossomCount; i++) {
+          createBlossom(container);
         }
-        
-        // 初始检查
-        checkDate();
-        
-        // 每秒更新一次倒计时
-        setInterval(checkDate, 1000);
-        
-        // 测试未来日期显示
-        function testFutureDate() {
-            document.getElementById('countdown-section').style.display = 'none';
-            document.getElementById('letter-section').style.display = 'block';
+      }
+
+      function createBlossom(container) {
+        const blossom = document.createElement("div");
+        blossom.classList.add("cherry-blossom");
+
+        // 随机位置和大小
+        blossom.style.left = Math.random() * 100 + "%";
+        blossom.style.width = Math.random() * 5 + 5 + "px";
+        blossom.style.height = blossom.style.width;
+
+        // 随机动画持续时间，确保有足够时间在底部停留
+        const duration = Math.random() * 5 + 15; // 15-20秒
+        blossom.style.animationDuration = duration + "s";
+
+        // 随机延迟
+        blossom.style.animationDelay = Math.random() * 10 + "s";
+
+        container.appendChild(blossom);
+
+        // 动画结束后移除并创建新的樱花
+        blossom.addEventListener("animationend", function () {
+          container.removeChild(blossom);
+          setTimeout(() => createBlossom(container), Math.random() * 2000);
+        });
+      }
+
+      // 音乐控制功能
+      const music = document.getElementById("background-music");
+      const musicButton = document.getElementById("music-button");
+
+      // 设置默认音量为20%
+      music.volume = 0.2;
+
+      function toggleMusic() {
+        if (music.paused) {
+          music.play();
+          musicButton.textContent = "暂停音乐";
+        } else {
+          music.pause();
+          musicButton.textContent = "播放音乐";
         }
-        
-        // 樱花飘落特效
-        function createCherryBlossoms() {
-            const container = document.getElementById('cherry-blossom-container');
-            const blossomCount = 30; // 增加樱花数量
-            
-            for (let i = 0; i < blossomCount; i++) {
-                createBlossom(container);
-            }
-        }
-        
-        function createBlossom(container) {
-            const blossom = document.createElement('div');
-            blossom.classList.add('cherry-blossom');
-            
-            // 随机位置和大小
-            blossom.style.left = Math.random() * 100 + '%';
-            blossom.style.width = (Math.random() * 5 + 5) + 'px';
-            blossom.style.height = blossom.style.width;
-            
-            // 随机动画持续时间，确保有足够时间在底部停留
-            const duration = Math.random() * 5 + 15; // 15-20秒
-            blossom.style.animationDuration = duration + 's';
-            
-            // 随机延迟
-            blossom.style.animationDelay = Math.random() * 10 + 's';
-            
-            container.appendChild(blossom);
-            
-            // 动画结束后移除并创建新的樱花
-            blossom.addEventListener('animationend', function() {
-                container.removeChild(blossom);
-                setTimeout(() => createBlossom(container), Math.random() * 2000);
-            });
-        }
-        
-        // 启动樱花特效
-        createCherryBlossoms();
+      }
+
+      // 启动樱花特效
+      createCherryBlossoms();
     </script>
-</body>
+  </body>
 </html>
