@@ -186,7 +186,15 @@
   <body>
     <div class="cherry-blossom-container" id="cherry-blossom-container"></div>
     <!-- 背景音乐 -->
-    <audio id="background-music" loop>
+    <audio id="background-music" preload="auto" loop>
+      <source
+        src="https://diskmirror.lingyuzhao.top/1107/Binary/M8000011yLdT1hTbnp.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <!-- 静音预播放音频 -->
+    <audio id="background-music-muted" preload="auto" loop muted>
       <source
         src="https://diskmirror.lingyuzhao.top/1107/Binary/M8000011yLdT1hTbnp.mp3"
         type="audio/mpeg"
@@ -354,20 +362,254 @@
 
       // 音乐控制功能
       const music = document.getElementById("background-music");
+      const musicMuted = document.getElementById("background-music-muted");
       const musicButton = document.getElementById("music-button");
 
-      // 设置默认音量为20%
-      music.volume = 0.1;
+      // 设置默认音量为10%
+      const defaultVolume = 0.1;
+      music.volume = defaultVolume;
+      musicMuted.volume = defaultVolume;
 
+      let userInteracted = false;
+      let isWeChatEnvironment = false;
+
+      // 检测微信环境
+      function detectWeChatEnvironment() {
+        const userAgent = navigator.userAgent;
+        isWeChatEnvironment = userAgent.includes("MicroMessenger");
+        console.log("微信环境检测:", isWeChatEnvironment ? "是" : "否");
+        console.log("User Agent:", userAgent);
+        return isWeChatEnvironment;
+      }
+
+      // 微信API策略1: WeixinJSBridge
+      async function wechatStrategy_JSBridge() {
+        if (typeof WeixinJSBridge !== "undefined") {
+          try {
+            return new Promise((resolve) => {
+              WeixinJSBridge.invoke("getNetworkType", {}, async function (res) {
+                try {
+                  music.volume = defaultVolume;
+                  music.muted = false;
+                  await music.play();
+                  console.log("✅ 微信JSBridge播放成功");
+                  updateMusicButtonState();
+                  resolve(true);
+                } catch (error) {
+                  console.log("❌ 微信JSBridge播放失败:", error.message);
+                  resolve(false);
+                }
+              });
+            });
+          } catch (error) {
+            console.log("❌ 微信JSBridge调用失败:", error.message);
+            return false;
+          }
+        } else {
+          console.log("⚠️ WeixinJSBridge不可用");
+          return false;
+        }
+      }
+
+      // 策略2: 静音预播放
+      async function strategy_MutedPreplay() {
+        try {
+          // 先静音播放
+          musicMuted.muted = true;
+          musicMuted.volume = 0;
+          await musicMuted.play();
+          console.log("✅ 静音预播放成功");
+
+          // 设置解除静音的触发器
+          const unmute = async () => {
+            try {
+              musicMuted.muted = false;
+              musicMuted.volume = defaultVolume;
+              console.log("✅ 成功解除静音");
+              updateMusicButtonState();
+            } catch (error) {
+              console.log("❌ 解除静音失败:", error.message);
+            }
+          };
+
+          // 多种触发方式
+          document.addEventListener("touchstart", unmute, { once: true });
+          document.addEventListener("click", unmute, { once: true });
+          setTimeout(unmute, 3000); // 3秒后自动解除静音
+
+          return true;
+        } catch (error) {
+          console.log("❌ 静音预播放失败:", error.message);
+          return false;
+        }
+      }
+
+      // 策略3: 页面可见性触发
+      async function strategy_VisibilityTrigger() {
+        const handleVisibilityChange = async () => {
+          if (document.visibilityState === "visible") {
+            try {
+              music.volume = defaultVolume;
+              music.muted = false;
+              await music.play();
+              console.log("✅ 页面可见性触发播放成功");
+              updateMusicButtonState();
+              document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange,
+              );
+              return true;
+            } catch (error) {
+              console.log("❌ 页面可见性触发播放失败:", error.message);
+            }
+          }
+          return false;
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        // 立即尝试一次
+        setTimeout(handleVisibilityChange, 1000);
+
+        return false; // 异步策略，不立即返回结果
+      }
+
+      // 尝试所有播放方法
+      async function tryAllPlayMethods() {
+        console.log("🚀 开始尝试所有播放方法...");
+
+        const methods = [
+          wechatStrategy_JSBridge,
+          strategy_MutedPreplay,
+          strategy_VisibilityTrigger,
+        ];
+
+        for (const method of methods) {
+          try {
+            const result = await method();
+            if (result) {
+              console.log("✅ 找到可用的播放方法");
+              return true;
+            }
+          } catch (error) {
+            console.log("❌ 方法执行失败:", error.message);
+          }
+        }
+
+        console.log("⚠️ 所有自动播放方法都失败，等待用户交互");
+        return false;
+      }
+
+      // 通用播放方法
+      async function playMusic() {
+        try {
+          music.muted = false;
+          music.volume = defaultVolume;
+          await music.play();
+          console.log("✅ 手动播放成功");
+          updateMusicButtonState();
+        } catch (error) {
+          console.log("❌ 手动播放失败:", error.message);
+          // 尝试静音预播放
+          await strategy_MutedPreplay();
+        }
+      }
+
+      // 暂停音乐
+      function pauseMusic() {
+        music.pause();
+        musicMuted.pause();
+        console.log("⏸️ 音乐已暂停");
+        updateMusicButtonState();
+      }
+
+      // 切换音乐播放状态
       function toggleMusic() {
-        if (music.paused) {
-          music.play();
+        userInteracted = true;
+        if (music.paused && musicMuted.paused) {
+          playMusic();
+        } else {
+          pauseMusic();
+        }
+      }
+
+      // 更新音乐按钮状态
+      function updateMusicButtonState() {
+        if (!music.paused || !musicMuted.paused) {
           musicButton.textContent = "暂停音乐";
         } else {
-          music.pause();
           musicButton.textContent = "播放音乐";
         }
       }
+
+      // 用户交互处理
+      function handleUserInteraction() {
+        if (userInteracted) return;
+        userInteracted = true;
+
+        console.log("👆 用户进行了交互");
+
+        // 如果有静音播放，解除静音
+        if (!musicMuted.paused && musicMuted.muted) {
+          musicMuted.muted = false;
+          musicMuted.volume = defaultVolume;
+          console.log("✅ 解除静音，音乐开始播放");
+          updateMusicButtonState();
+        } else if (music.paused && musicMuted.paused) {
+          // 如果音频暂停，开始播放
+          playMusic();
+        }
+      }
+
+      // 初始化音乐播放
+      function initMusicPlayback() {
+        detectWeChatEnvironment();
+
+        // 设置音频事件监听
+        [music, musicMuted].forEach((audio, index) => {
+          audio.addEventListener("loadstart", () =>
+            console.log(`音频${index + 1}开始加载`),
+          );
+          audio.addEventListener("loadeddata", () =>
+            console.log(`音频${index + 1}数据加载完成`),
+          );
+          audio.addEventListener("canplay", () =>
+            console.log(`音频${index + 1}可以播放`),
+          );
+          audio.addEventListener("play", () =>
+            console.log(`音频${index + 1}开始播放`),
+          );
+          audio.addEventListener("pause", () =>
+            console.log(`音频${index + 1}暂停`),
+          );
+          audio.addEventListener("error", (e) => {
+            console.log(
+              `音频${index + 1}错误:`,
+              e.message || e.name || "未知错误",
+            );
+          });
+        });
+
+        // 延迟启动播放尝试
+        setTimeout(() => {
+          tryAllPlayMethods();
+        }, 1000);
+      }
+
+      // 监听用户交互事件
+      document.addEventListener("click", handleUserInteraction);
+      document.addEventListener("touchstart", handleUserInteraction);
+      document.addEventListener("keydown", handleUserInteraction);
+
+      // 微信环境特殊处理
+      document.addEventListener("WeixinJSBridgeReady", function () {
+        console.log("🔗 微信JS桥接准备就绪");
+        // 在WeixinJSBridgeReady后立即尝试微信API播放
+        tryAllPlayMethods();
+      });
+
+      // 页面加载完成后初始化
+      window.addEventListener("load", initMusicPlayback);
 
       // 启动樱花特效
       createCherryBlossoms();
