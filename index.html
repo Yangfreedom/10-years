@@ -181,6 +181,65 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
+
+      .volume-control {
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .volume-control label {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .volume-control input[type="range"] {
+        width: 100px;
+        height: 5px;
+        border-radius: 5px;
+        background: #ffcc00;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .volume-control input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #ffcc00;
+        cursor: pointer;
+      }
+
+      .volume-control input[type="range"]::-moz-range-thumb {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #ffcc00;
+        cursor: pointer;
+      }
+
+      .volume-control span {
+        font-size: 0.8rem;
+        color: #666;
+        min-width: 40px;
+      }
+
+      @media (max-width: 768px) {
+        .volume-control {
+          flex-direction: column;
+          gap: 5px;
+        }
+
+        .volume-control input[type="range"] {
+          width: 80px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -240,6 +299,19 @@
           <button class="test-button" onclick="toggleMusic()" id="music-button">
             播放音乐
           </button>
+          <div class="volume-control">
+            <label for="volume-slider">音量：</label>
+            <input
+              type="range"
+              id="volume-slider"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0.1"
+              onchange="changeVolume(this.value)"
+            />
+            <span id="volume-display">5%</span>
+          </div>
         </div>
       </div>
       <div id="letter-section" style="display: none">
@@ -521,6 +593,16 @@
         musicMuted.pause();
         console.log("⏸️ 音乐已暂停");
         updateMusicButtonState();
+      }
+
+      // 改变音量
+      function changeVolume(value) {
+        const volume = parseFloat(value);
+        music.volume = volume;
+        musicMuted.volume = volume;
+        document.getElementById("volume-display").textContent =
+          Math.round(volume * 100) + "%";
+        console.log("🔊 音量调整为:", Math.round(volume * 100) + "%");
       }
 
       // 切换音乐播放状态
