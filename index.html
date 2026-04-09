@@ -598,12 +598,52 @@
 
       // 改变音量
       function changeVolume(value) {
+        // 确保有用户交互
+        if (!userInteracted) {
+          userInteracted = true;
+        }
+
         const volume = parseFloat(value);
-        music.volume = volume;
-        musicMuted.volume = volume;
-        document.getElementById("volume-display").textContent =
-          Math.round(volume * 100) + "%";
-        console.log("🔊 音量调整为:", Math.round(volume * 100) + "%");
+
+        try {
+          // 尝试设置两个音频元素的音量
+          if (music) {
+            music.volume = volume;
+          }
+          if (musicMuted) {
+            musicMuted.volume = volume;
+          }
+
+          // 更新音量显示
+          const volumeDisplay = document.getElementById("volume-display");
+          if (volumeDisplay) {
+            volumeDisplay.textContent = Math.round(volume * 100) + "%";
+          }
+
+          console.log("🔊 音量调整为:", Math.round(volume * 100) + "%");
+        } catch (error) {
+          console.log("❌ 音量调整失败:", error.message);
+        }
+      }
+
+      // 为音量滑块添加触摸事件支持（针对iOS）
+      function initVolumeSlider() {
+        const volumeSlider = document.getElementById("volume-slider");
+        if (volumeSlider) {
+          // 添加触摸事件支持
+          volumeSlider.addEventListener("touchstart", function () {
+            userInteracted = true;
+          });
+
+          volumeSlider.addEventListener("touchmove", function (e) {
+            userInteracted = true;
+            // 尝试直接获取值并设置音量
+            const value = this.value;
+            changeVolume(value);
+          });
+
+          console.log("✅ 音量滑块触摸事件已初始化");
+        }
       }
 
       // 切换音乐播放状态
@@ -647,6 +687,9 @@
       // 初始化音乐播放
       function initMusicPlayback() {
         detectWeChatEnvironment();
+
+        // 初始化音量滑块（针对iOS）
+        initVolumeSlider();
 
         // 设置音频事件监听
         [music, musicMuted].forEach((audio, index) => {
