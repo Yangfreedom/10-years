@@ -181,6 +181,73 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
+
+      .volume-control {
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .volume-control label {
+        font-size: 0.9rem;
+        color: #666;
+        white-space: nowrap;
+      }
+
+      .volume-control input[type="range"] {
+        flex: 1;
+        min-width: 100px;
+        max-width: 200px;
+        height: 6px;
+        border-radius: 3px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .volume-control input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #ffcc00;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .volume-control input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #ffcc00;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .volume-control #volume-display {
+        font-size: 0.9rem;
+        color: #666;
+        min-width: 40px;
+        text-align: right;
+      }
+
+      /* 媒体查询：适配移动设备 */
+      @media (max-width: 768px) {
+        .volume-control {
+          flex-direction: column;
+          gap: 5px;
+        }
+
+        .volume-control input[type="range"] {
+          max-width: 100%;
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -240,6 +307,18 @@
           <button class="test-button" onclick="toggleMusic()" id="music-button">
             播放音乐
           </button>
+          <div class="volume-control">
+            <label for="volume-slider">音量:</label>
+            <input
+              type="range"
+              id="volume-slider"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.05"
+            />
+            <span id="volume-display">5%</span>
+          </div>
         </div>
       </div>
       <div id="letter-section" style="display: none">
@@ -365,10 +444,10 @@
       const musicMuted = document.getElementById("background-music-muted");
       const musicButton = document.getElementById("music-button");
 
-      // 设置默认音量为10%
-      const defaultVolume = 0.1;
-      music.volume = defaultVolume;
-      musicMuted.volume = defaultVolume;
+      // 设置默认音量为5%
+      let currentVolume = 0.05;
+      music.volume = currentVolume;
+      musicMuted.volume = currentVolume;
 
       let userInteracted = false;
       let isWeChatEnvironment = false;
@@ -389,7 +468,7 @@
             return new Promise((resolve) => {
               WeixinJSBridge.invoke("getNetworkType", {}, async function (res) {
                 try {
-                  music.volume = defaultVolume;
+                  music.volume = currentVolume;
                   music.muted = false;
                   await music.play();
                   console.log("✅ 微信JSBridge播放成功");
@@ -424,7 +503,7 @@
           const unmute = async () => {
             try {
               musicMuted.muted = false;
-              musicMuted.volume = defaultVolume;
+              musicMuted.volume = currentVolume;
               console.log("✅ 成功解除静音");
               updateMusicButtonState();
             } catch (error) {
@@ -449,7 +528,7 @@
         const handleVisibilityChange = async () => {
           if (document.visibilityState === "visible") {
             try {
-              music.volume = defaultVolume;
+              music.volume = currentVolume;
               music.muted = false;
               await music.play();
               console.log("✅ 页面可见性触发播放成功");
@@ -504,7 +583,7 @@
       async function playMusic() {
         try {
           music.muted = false;
-          music.volume = defaultVolume;
+          music.volume = currentVolume;
           await music.play();
           console.log("✅ 手动播放成功");
           updateMusicButtonState();
@@ -552,7 +631,7 @@
         // 如果有静音播放，解除静音
         if (!musicMuted.paused && musicMuted.muted) {
           musicMuted.muted = false;
-          musicMuted.volume = defaultVolume;
+          musicMuted.volume = currentVolume;
           console.log("✅ 解除静音，音乐开始播放");
           updateMusicButtonState();
         } else if (music.paused && musicMuted.paused) {
@@ -561,9 +640,31 @@
         }
       }
 
+      // 音量控制函数
+      function changeVolume(value) {
+        currentVolume = parseFloat(value);
+        music.volume = currentVolume;
+        musicMuted.volume = currentVolume;
+
+        // 更新音量显示
+        const volumePercentage = Math.round(currentVolume * 100);
+        document.getElementById("volume-display").textContent =
+          volumePercentage + "%";
+
+        console.log("🔊 音量调整为:", volumePercentage + "%");
+      }
+
       // 初始化音乐播放
       function initMusicPlayback() {
         detectWeChatEnvironment();
+
+        // 设置音量控制滑块事件监听
+        const volumeSlider = document.getElementById("volume-slider");
+        if (volumeSlider) {
+          volumeSlider.addEventListener("input", function () {
+            changeVolume(this.value);
+          });
+        }
 
         // 设置音频事件监听
         [music, musicMuted].forEach((audio, index) => {
