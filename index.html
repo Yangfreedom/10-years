@@ -367,8 +367,15 @@
 
       // 设置默认音量为10%
       const defaultVolume = 0.1;
-      music.volume = defaultVolume;
-      musicMuted.volume = defaultVolume;
+
+      // 设置音量并记录日志
+      function setVolume(audio, volume) {
+        audio.volume = volume;
+        console.log(`🔊 设置音量: ${audio.id} = ${(volume * 100).toFixed(0)}%`);
+      }
+
+      setVolume(music, defaultVolume);
+      setVolume(musicMuted, defaultVolume);
 
       let userInteracted = false;
       let isWeChatEnvironment = false;
@@ -389,7 +396,7 @@
             return new Promise((resolve) => {
               WeixinJSBridge.invoke("getNetworkType", {}, async function (res) {
                 try {
-                  music.volume = defaultVolume;
+                  setVolume(music, defaultVolume);
                   music.muted = false;
                   await music.play();
                   console.log("✅ 微信JSBridge播放成功");
@@ -414,9 +421,9 @@
       // 策略2: 静音预播放
       async function strategy_MutedPreplay() {
         try {
-          // 先静音播放
+          // 先设置音量为10%，再静音
+          setVolume(musicMuted, defaultVolume);
           musicMuted.muted = true;
-          musicMuted.volume = 0;
           await musicMuted.play();
           console.log("✅ 静音预播放成功");
 
@@ -424,8 +431,9 @@
           const unmute = async () => {
             try {
               musicMuted.muted = false;
-              musicMuted.volume = defaultVolume;
-              console.log("✅ 成功解除静音");
+              console.log(
+                "✅ 成功解除静音，音量: " + defaultVolume * 100 + "%",
+              );
               updateMusicButtonState();
             } catch (error) {
               console.log("❌ 解除静音失败:", error.message);
@@ -449,7 +457,7 @@
         const handleVisibilityChange = async () => {
           if (document.visibilityState === "visible") {
             try {
-              music.volume = defaultVolume;
+              setVolume(music, defaultVolume);
               music.muted = false;
               await music.play();
               console.log("✅ 页面可见性触发播放成功");
@@ -503,8 +511,11 @@
       // 通用播放方法
       async function playMusic() {
         try {
+          // 先暂停静音预播放，避免两个音频同时播放
+          musicMuted.pause();
+
           music.muted = false;
-          music.volume = defaultVolume;
+          setVolume(music, defaultVolume);
           await music.play();
           console.log("✅ 手动播放成功");
           updateMusicButtonState();
@@ -526,9 +537,18 @@
       // 切换音乐播放状态
       function toggleMusic() {
         userInteracted = true;
-        if (music.paused && musicMuted.paused) {
+        // 检查静音预播放是否正在播放且处于静音状态
+        if (!musicMuted.paused && musicMuted.muted) {
+          // 解除静音
+          musicMuted.muted = false;
+          setVolume(musicMuted, defaultVolume);
+          console.log("✅ 解除静音，音乐开始播放");
+          updateMusicButtonState();
+        } else if (music.paused && musicMuted.paused) {
+          // 如果两个音频都暂停，开始播放
           playMusic();
         } else {
+          // 否则暂停所有音频
           pauseMusic();
         }
       }
@@ -552,7 +572,7 @@
         // 如果有静音播放，解除静音
         if (!musicMuted.paused && musicMuted.muted) {
           musicMuted.muted = false;
-          musicMuted.volume = defaultVolume;
+          setVolume(musicMuted, defaultVolume);
           console.log("✅ 解除静音，音乐开始播放");
           updateMusicButtonState();
         } else if (music.paused && musicMuted.paused) {
