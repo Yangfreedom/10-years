@@ -230,6 +230,34 @@
         min-width: 40px;
       }
 
+      .volume-buttons {
+        display: flex;
+        gap: 5px;
+      }
+
+      .volume-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #ffcc00;
+        border: none;
+        color: #333;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+      }
+
+      .volume-btn:hover {
+        background: #ffd700;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
       @media (max-width: 768px) {
         .volume-control {
           flex-direction: column;
@@ -238,6 +266,10 @@
 
         .volume-control input[type="range"] {
           width: 80px;
+        }
+
+        .volume-buttons {
+          margin-top: 5px;
         }
       }
     </style>
@@ -311,7 +343,12 @@
               oninput="changeVolume(this.value)"
               onchange="changeVolume(this.value)"
             />
-            <span id="volume-display">10%</span>
+            <span id="volume-display">5%</span>
+            <!-- iOS兼容的音量控制按钮 -->
+            <div class="volume-buttons">
+              <button class="volume-btn" onclick="adjustVolume(-0.1)">-</button>
+              <button class="volume-btn" onclick="adjustVolume(0.1)">+</button>
+            </div>
           </div>
         </div>
       </div>
@@ -643,6 +680,33 @@
           });
 
           console.log("✅ 音量滑块触摸事件已初始化");
+        }
+      }
+
+      // 调节音量（针对iOS）
+      function adjustVolume(delta) {
+        // 确保有用户交互
+        userInteracted = true;
+
+        try {
+          const volumeSlider = document.getElementById("volume-slider");
+          if (volumeSlider) {
+            let currentVolume = parseFloat(volumeSlider.value);
+            let newVolume = currentVolume + delta;
+
+            // 限制音量范围
+            newVolume = Math.max(0, Math.min(1, newVolume));
+
+            // 更新滑块值
+            volumeSlider.value = newVolume;
+
+            // 调用changeVolume函数更新音量
+            changeVolume(newVolume);
+
+            console.log("🔊 音量调节:", Math.round(newVolume * 100) + "%");
+          }
+        } catch (error) {
+          console.log("❌ 音量调节失败:", error.message);
         }
       }
 
