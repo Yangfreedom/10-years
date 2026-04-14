@@ -11,6 +11,71 @@
         box-sizing: border-box;
       }
 
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in {
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+          opacity 0.8s ease-out,
+          transform 0.8s ease-out;
+      }
+
+      .typing-container {
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .typing-text {
+        display: inline-block;
+        border-right: 2px solid #ffcc00;
+        animation: blink 0.7s step-end infinite;
+      }
+
+      @keyframes blink {
+        from,
+        to {
+          border-color: transparent;
+        }
+        50% {
+          border-color: #ffcc00;
+        }
+      }
+
+      .typing-cursor {
+        animation: cursorBlink 0.7s step-end infinite;
+        color: #ffcc00;
+        font-weight: bold;
+      }
+
+      @keyframes cursorBlink {
+        from,
+        to {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      .hidden-content {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      .show-content {
+        animation: fadeIn 1.2s ease-out forwards;
+      }
+
       /* 樱花飘落特效 */
       .cherry-blossom-container {
         position: fixed;
@@ -203,72 +268,257 @@
     <div class="container">
       <div id="countdown-section">
         <h1>致十年后的你</h1>
-        <p>这是一封需要十年时间才能打开的信</p>
-        <p>只有在2034年2月2日之后，你才能看到我想对你说的话</p>
-        <div class="countdown">
-          <div class="countdown-item">
-            <div class="countdown-number" id="years">0</div>
-            <div class="countdown-label">年</div>
+        <p class="typing-container" id="typing-line1"></p>
+        <p class="typing-container" id="typing-line2"></p>
+        <div id="countdown-content" class="hidden-content">
+          <div class="countdown">
+            <div class="countdown-item fade-in" style="animation-delay: 0.7s">
+              <div
+                class="countdown-number fade-in"
+                id="years"
+                style="animation-delay: 0.8s"
+              >
+                0
+              </div>
+              <div
+                class="countdown-label fade-in"
+                style="animation-delay: 0.9s"
+              >
+                年
+              </div>
+            </div>
+            <div class="countdown-item fade-in" style="animation-delay: 0.75s">
+              <div
+                class="countdown-number fade-in"
+                id="months"
+                style="animation-delay: 0.85s"
+              >
+                0
+              </div>
+              <div
+                class="countdown-label fade-in"
+                style="animation-delay: 0.95s"
+              >
+                月
+              </div>
+            </div>
+            <div class="countdown-item fade-in" style="animation-delay: 0.8s">
+              <div
+                class="countdown-number fade-in"
+                id="days"
+                style="animation-delay: 0.9s"
+              >
+                0
+              </div>
+              <div class="countdown-label fade-in" style="animation-delay: 1s">
+                日
+              </div>
+            </div>
+            <div class="countdown-item fade-in" style="animation-delay: 0.85s">
+              <div
+                class="countdown-number fade-in"
+                id="hours"
+                style="animation-delay: 0.95s"
+              >
+                0
+              </div>
+              <div
+                class="countdown-label fade-in"
+                style="animation-delay: 1.05s"
+              >
+                时
+              </div>
+            </div>
+            <div class="countdown-item fade-in" style="animation-delay: 0.9s">
+              <div
+                class="countdown-number fade-in"
+                id="minutes"
+                style="animation-delay: 1s"
+              >
+                0
+              </div>
+              <div
+                class="countdown-label fade-in"
+                style="animation-delay: 1.1s"
+              >
+                分
+              </div>
+            </div>
+            <div class="countdown-item fade-in" style="animation-delay: 0.95s">
+              <div
+                class="countdown-number fade-in"
+                id="seconds"
+                style="animation-delay: 1.05s"
+              >
+                0
+              </div>
+              <div
+                class="countdown-label fade-in"
+                style="animation-delay: 1.15s"
+              >
+                秒
+              </div>
+            </div>
           </div>
-          <div class="countdown-item">
-            <div class="countdown-number" id="months">0</div>
-            <div class="countdown-label">月</div>
-          </div>
-          <div class="countdown-item">
-            <div class="countdown-number" id="days">0</div>
-            <div class="countdown-label">日</div>
-          </div>
-          <div class="countdown-item">
-            <div class="countdown-number" id="hours">0</div>
-            <div class="countdown-label">时</div>
-          </div>
-          <div class="countdown-item">
-            <div class="countdown-number" id="minutes">0</div>
-            <div class="countdown-label">分</div>
-          </div>
-          <div class="countdown-item">
-            <div class="countdown-number" id="seconds">0</div>
-            <div class="countdown-label">秒</div>
-          </div>
-        </div>
-        <p>时间会慢慢沉淀，有些东西会在你心底慢慢模糊</p>
-        <p>十年后，当你看到这封信时，希望你已经找到了属于自己的幸福</p>
-        <button class="test-button" onclick="testFutureDate()">
-          测试未来日期显示
-        </button>
-        <div class="music-controls">
-          <button class="test-button" onclick="toggleMusic()" id="music-button">
-            播放音乐
+          <p class="fade-in" style="animation-delay: 1.3s">
+            时间会慢慢沉淀，有些东西会在你心底慢慢模糊
+          </p>
+          <p class="fade-in" style="animation-delay: 1.5s">
+            十年后，当你看到这封信时，希望你已经找到了属于自己的幸福
+          </p>
+          <button
+            class="test-button fade-in"
+            style="animation-delay: 1.7s"
+            onclick="testFutureDate()"
+          >
+            测试未来日期显示
           </button>
+          <div class="music-controls">
+            <button
+              class="test-button fade-in"
+              style="animation-delay: 1.7s"
+              onclick="toggleMusic()"
+              id="music-button"
+            >
+              播放音乐
+            </button>
+          </div>
+          <div class="footer">
+            <p class="fade-in" style="animation-delay: 2.2s">© 2024 时间胶囊</p>
+          </div>
         </div>
       </div>
       <div id="letter-section" style="display: none">
-        <h1>给前任的信</h1>
+        <h1 class="fade-in" style="animation-delay: 0.2s">给前任的信</h1>
         <div class="letter">
-          <h2>亲爱的，</h2>
-          <p>
+          <h2 class="fade-in" style="animation-delay: 0.4s">亲爱的，</h2>
+          <p class="fade-in" style="animation-delay: 0.6s">
             当你看到这封信时，已经过去了整整十年。不知道你现在过得怎么样，是否已经找到了那个能陪你走完一生的人。
           </p>
-          <p>
+          <p class="fade-in" style="animation-delay: 0.8s">
             十年前，我们分开了。现在回想起来，那些曾经的争吵和矛盾都已经变得模糊，留在记忆里的只有那些美好的时光。
           </p>
-          <p>
+          <p class="fade-in" style="animation-delay: 1s">
             我想告诉你，我不后悔曾经和你在一起的日子。那些共同度过的时光，那些一起经历的事情，都成为了我生命中宝贵的财富。
           </p>
-          <p>
+          <p class="fade-in" style="animation-delay: 1.2s">
             我希望你现在过得幸福，希望你找到了真正属于你的那个人。无论如何，我都会在心里为你祝福。
           </p>
-          <p>谢谢你曾经出现在我的生命里，谢谢你陪我走过那段青春岁月。</p>
-          <p>祝你一切安好。</p>
-          <p>曾经的我</p>
-          <p>2034年2月2日</p>
+          <p class="fade-in" style="animation-delay: 1.4s">
+            谢谢你曾经出现在我的生命里，谢谢你陪我走过那段青春岁月。
+          </p>
+          <p class="fade-in" style="animation-delay: 1.6s">祝你一切安好。</p>
+          <p class="fade-in" style="animation-delay: 1.8s">曾经的我</p>
+          <p class="fade-in" style="animation-delay: 2s">2034年2月2日</p>
         </div>
-      </div>
-      <div class="footer">
-        <p>© 2024 时间胶囊</p>
       </div>
     </div>
     <script>
+      const typingTexts = [
+        "这是一封需要十年时间才能打开的信",
+        "只有在2034年2月2日之后，你才能看到我想对你说的话",
+      ];
+      const typingSpeed = 120;
+
+      function typeWriter() {
+        let lineIndex = 0;
+        let charIndex = 0;
+        const line1Element = document.getElementById("typing-line1");
+        const line2Element = document.getElementById("typing-line2");
+        const contentElement = document.getElementById("countdown-content");
+
+        function cursorBlink(times, callback) {
+          if (times > 0) {
+            line1Element.innerHTML = '<span class="typing-cursor">|</span>';
+            setTimeout(() => {
+              line1Element.innerHTML = "";
+              setTimeout(() => {
+                cursorBlink(times - 1, callback);
+              }, 300);
+            }, 300);
+          } else {
+            callback();
+          }
+        }
+
+        function typeLine() {
+          if (lineIndex < typingTexts.length) {
+            const currentText = typingTexts[lineIndex];
+            const currentElement =
+              lineIndex === 0 ? line1Element : line2Element;
+
+            if (charIndex < currentText.length) {
+              currentElement.innerHTML =
+                currentText.substring(0, charIndex + 1) +
+                '<span class="typing-cursor">|</span>';
+              charIndex++;
+              setTimeout(typeLine, typingSpeed);
+            } else {
+              currentElement.innerHTML = currentText;
+              lineIndex++;
+              charIndex = 0;
+              setTimeout(typeLine, 500);
+            }
+          } else {
+            showContentLineByLine();
+          }
+        }
+
+        function showContentLineByLine() {
+          const countdownItems =
+            contentElement.querySelectorAll(".countdown-item");
+          const otherItems = contentElement.querySelectorAll(
+            ".fade-in:not(.countdown-item)",
+          );
+          let itemIndex = 0;
+
+          function showNextCountdownItem() {
+            if (itemIndex < countdownItems.length) {
+              countdownItems[itemIndex].style.opacity = "1";
+              countdownItems[itemIndex].style.transform = "translateY(0)";
+
+              const number =
+                countdownItems[itemIndex].querySelector(".countdown-number");
+              const label =
+                countdownItems[itemIndex].querySelector(".countdown-label");
+              if (number) {
+                setTimeout(() => {
+                  number.style.opacity = "1";
+                  number.style.transform = "translateY(0)";
+                }, 150);
+              }
+              if (label) {
+                setTimeout(() => {
+                  label.style.opacity = "1";
+                  label.style.transform = "translateY(0)";
+                }, 250);
+              }
+
+              itemIndex++;
+              setTimeout(showNextCountdownItem, 120);
+            } else {
+              itemIndex = 0;
+              setTimeout(showNextOtherItem, 200);
+            }
+          }
+
+          function showNextOtherItem() {
+            if (itemIndex < otherItems.length) {
+              otherItems[itemIndex].style.opacity = "1";
+              otherItems[itemIndex].style.transform = "translateY(0)";
+              itemIndex++;
+              setTimeout(showNextOtherItem, 150);
+            }
+          }
+
+          contentElement.style.opacity = "1";
+          contentElement.style.transform = "translateY(0)";
+          setTimeout(showNextCountdownItem, 300);
+        }
+
+        cursorBlink(3, typeLine);
+      }
+
       // 设置目标日期：2034年2月2日
       const targetDate = new Date("2034-02-02T00:00:00");
 
@@ -629,7 +879,10 @@
       });
 
       // 页面加载完成后初始化
-      window.addEventListener("load", initMusicPlayback);
+      window.addEventListener("load", () => {
+        initMusicPlayback();
+        typeWriter();
+      });
 
       // 启动樱花特效
       createCherryBlossoms();
