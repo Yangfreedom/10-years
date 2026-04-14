@@ -32,7 +32,8 @@
 
       .typing-container {
         overflow: hidden;
-        white-space: nowrap;
+        word-wrap: break-word;
+        word-break: break-all;
       }
 
       .typing-text {
@@ -52,9 +53,12 @@
       }
 
       .typing-cursor {
-        animation: cursorBlink 0.7s step-end infinite;
         color: #ffcc00;
         font-weight: bold;
+      }
+
+      .blink-animation {
+        animation: cursorBlink 0.3s step-end infinite;
       }
 
       @keyframes cursorBlink {
@@ -137,6 +141,9 @@
         box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
         padding: 40px;
         text-align: center;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
       }
       h1 {
         font-size: 2.5rem;
@@ -214,6 +221,9 @@
         background: #fff9e6;
         border-radius: 12px;
         border: 2px solid #ffcc00;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
       }
       .letter h2 {
         margin-bottom: 20px;
@@ -429,14 +439,13 @@
 
         function cursorBlink(times, callback) {
           if (times > 0) {
-            line1Element.innerHTML = '<span class="typing-cursor">|</span>';
+            line1Element.innerHTML =
+              '<span class="typing-cursor blink-animation">|</span>';
             setTimeout(() => {
-              line1Element.innerHTML = "";
-              setTimeout(() => {
-                cursorBlink(times - 1, callback);
-              }, 300);
-            }, 300);
+              cursorBlink(times - 1, callback);
+            }, 600);
           } else {
+            line1Element.innerHTML = "";
             callback();
           }
         }
@@ -450,7 +459,7 @@
             if (charIndex < currentText.length) {
               currentElement.innerHTML =
                 currentText.substring(0, charIndex + 1) +
-                '<span class="typing-cursor">|</span>';
+                '<span class="typing-cursor blink-animation">|</span>';
               charIndex++;
               setTimeout(typeLine, typingSpeed);
             } else {
@@ -528,7 +537,16 @@
         if (now >= targetDate) {
           // 显示信件内容
           document.getElementById("countdown-section").style.display = "none";
-          document.getElementById("letter-section").style.display = "block";
+          const letterSection = document.getElementById("letter-section");
+          letterSection.style.display = "block";
+
+          const fadeItems = letterSection.querySelectorAll(".fade-in");
+          fadeItems.forEach((item, index) => {
+            setTimeout(() => {
+              item.style.opacity = "1";
+              item.style.transform = "translateY(0)";
+            }, index * 150);
+          });
         } else {
           // 继续显示倒计时
           updateCountdown();
@@ -572,7 +590,16 @@
       // 测试未来日期显示
       function testFutureDate() {
         document.getElementById("countdown-section").style.display = "none";
-        document.getElementById("letter-section").style.display = "block";
+        const letterSection = document.getElementById("letter-section");
+        letterSection.style.display = "block";
+
+        const fadeItems = letterSection.querySelectorAll(".fade-in");
+        fadeItems.forEach((item, index) => {
+          setTimeout(() => {
+            item.style.opacity = "1";
+            item.style.transform = "translateY(0)";
+          }, index * 150);
+        });
       }
 
       // 樱花飘落特效
