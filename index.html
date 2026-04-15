@@ -24,10 +24,10 @@
 
       .fade-in {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(15px);
         transition:
-          opacity 0.8s ease-out,
-          transform 0.8s ease-out;
+          opacity 1.2s ease-out,
+          transform 1.2s ease-out;
       }
 
       .typing-container {
@@ -58,7 +58,7 @@
       }
 
       .blink-animation {
-        animation: cursorBlink 0.3s step-end infinite;
+        animation: cursorBlink 0.6s step-end infinite;
       }
 
       @keyframes cursorBlink {
@@ -73,7 +73,7 @@
 
       .hidden-content {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(15px);
       }
 
       .show-content {
@@ -370,16 +370,22 @@
               </div>
             </div>
           </div>
-          <p class="fade-in" style="animation-delay: 1.2s">
-            或许你永远也不会看这份信、但我的想法也永远留存于此
+          <p class="fade-in" style="animation-delay: 1.5s">
+            或许你永远也不会看这份信
           </p>
-          <p class="fade-in" style="animation-delay: 1.3s">
-            而这并非幼稚的念头，我只是想把此刻的想法封存于此，不问后来
+          <p class="fade-in" style="animation-delay: 2s">
+            但我的想法也永远留存于此
           </p>
-          <p class="fade-in" style="animation-delay: 1.4s">
+          <p class="fade-in" style="animation-delay: 2.5s">
+            而这并非幼稚的念头
+          </p>
+          <p class="fade-in" style="animation-delay: 3s">
+            我只是想把此刻的想法封存于此，不问后来
+          </p>
+          <p class="fade-in" style="animation-delay: 3.5s">
             时间会慢慢沉淀，某些记忆会慢慢模糊
           </p>
-          <p class="fade-in" style="animation-delay: 1.5s">
+          <p class="fade-in" style="animation-delay: 4s">
             多年后，当这封信有幸被你打开时，希望你已经找到了属于自己的幸福
           </p>
 
@@ -498,23 +504,20 @@
               const label =
                 countdownItems[itemIndex].querySelector(".countdown-label");
               if (number) {
-                setTimeout(() => {
-                  number.style.opacity = "1";
-                  number.style.transform = "translateY(0)";
-                }, 150);
+                number.style.opacity = "1";
+                number.style.transform = "translateY(0)";
               }
               if (label) {
-                setTimeout(() => {
-                  label.style.opacity = "1";
-                  label.style.transform = "translateY(0)";
-                }, 250);
+                label.style.opacity = "1";
+                label.style.transform = "translateY(0)";
               }
 
               itemIndex++;
-              setTimeout(showNextCountdownItem, 120);
-            } else {
-              itemIndex = 0;
-              setTimeout(showNextOtherItem, 200);
+              if (itemIndex < countdownItems.length) {
+                setTimeout(showNextCountdownItem, 100);
+              } else {
+                showNextOtherItem();
+              }
             }
           }
 
@@ -523,7 +526,7 @@
               otherItems[itemIndex].style.opacity = "1";
               otherItems[itemIndex].style.transform = "translateY(0)";
               itemIndex++;
-              setTimeout(showNextOtherItem, 150);
+              setTimeout(showNextOtherItem, 120);
             }
           }
 
@@ -552,7 +555,7 @@
             setTimeout(() => {
               item.style.opacity = "1";
               item.style.transform = "translateY(0)";
-            }, index * 150);
+            }, index * 120);
           });
         } else {
           // 继续显示倒计时
@@ -605,7 +608,7 @@
           setTimeout(() => {
             item.style.opacity = "1";
             item.style.transform = "translateY(0)";
-          }, index * 150);
+          }, index * 120);
         });
       }
 
